@@ -42,54 +42,24 @@ def fetch_details(id_list):
     return results
 
 
-'''
-if __name__ == '__main__':
+def process_abstract(article):
+    return str(article['Abstract']['AbstractText'][0]) if 'Abstract' in article.keys() else ""
 
-    # Make the query on PubMed
-    pubmed = PubMed(tool="PubMedSearcher", email="daspranab239@gmail.com")
-    search_term = input("Search PMC Full-Text Archive:\n")
-    num_results = int(input("How many articles do you want?\n"))
-    results = pubmed.query(search_term, max_results=num_results)
-    black_list = generate_black_list()
-    print(black_list)
-    articleList = []
-    articleInfo = []
-    print(results)
-    print('Found articles: ')
-    i = 0
 
-    # Compose the information dictionary to put in the dataframe, given the query
-    for article in list(results):
-        assert results.__class_getitem__(i) in list(results)
-        pubmedId = article.pubmed_id.partition('\n')[0]
-        abstract = article.abstract
-        keywords = get_data(article, 'keywords')
-        pertinence_score = pertinence(search_term, results.__class_getitem__(i), results, num_results, black_list)
+def process_keywords(paper):
+    keywords = list()
+    for keyword in paper['MedlineCitation']['KeywordList']:
+        keywords.append(str(keyword[0]))
+    return keywords
 
-        articleInfo.append({
-            u'pubmed_id': pubmedId,
-            u'title': article.title,
-            u'keywords': keywords,
-            u'journal': get_data(article, 'journal'),
-            u'abstract': abstract,
-            u'conclusions': get_data(article, 'conclusions'),
-            u'methods': get_data(article, 'methods'),
-            u'results': get_data(article, 'results'),
-            u'copyrights': article.copyrights,
-            u'doi': article.doi,
-            u'publication_date': article.publication_date,
-            u'authors': article.authors,
-            u'pertinence': pertinence_score})
-        i = i + 1
 
-    # Put all information in the dataframe
-    df = pd.DataFrame(articleInfo)
-    #print(df.iloc[:, :])
+def process_authors(article):
+    authors = list()
+    for author in article['AuthorList']:
+        if 'ForeName' in author.keys() and 'LastName' in author.keys():
+            authors.append(author['ForeName'] + " " + author['LastName'])
+    return authors
 
-    # Convert the dataframe into a .csv file
-    with open('csv_db.txt', 'w') as csv_db:
-        df.to_csv(path_or_buf=csv_db, index=False)
-    '''
 
 if __name__ == '__main__':
     search_term = input("Search PMC Full-Text Archive:\n")
@@ -99,24 +69,37 @@ if __name__ == '__main__':
     papers = fetch_details(id_list)
     emp = []
     pertinence_list = []
-    black_list = generate_black_list() + ['<', '>']
+    black_list = generate_black_list() + ['<', '>']     # To eventually update
     referring_dictionary = create_dictionary(papers, black_list)
-    print(referring_dictionary)
+    # print(referring_dictionary)
     for i, paper in enumerate(papers['PubmedArticle']):
         # print("{}) {}".format(i+1, paper['MedlineCitation']['Article']['ArticleTitle']))
         article = paper['MedlineCitation']['Article']
         title = str(article['ArticleTitle'])
-        if 'AbstractText' in article.keys():
-            abstract = str(paper['MedlineCitation']['Article']['Abstract']['AbstractText'])
-        else:
-            abstract = ""
+        '''
         emp.append((paper['MedlineCitation']['PMID'],
                     title,
                     paper['MedlineCitation']['KeywordList'],
                     paper['MedlineCitation']['Article']['AuthorList'],
                     abstract))
+        
+        emp.append({
+            'PMID': paper['MedlineCitation']['PMID'],
+            'title': title,
+            'keywords': list(paper['MedlineCitation']['KeywordList']),
+            'authors': list(article['AuthorList']),
+            'abstract': abstract
+        })
+        '''
+        emp.append({
+            'PMID': paper['MedlineCitation']['PMID'],
+            'title': title,
+            'keywords': process_keywords(paper),
+            'authors': process_authors(article),
+            'abstract': process_abstract(article)
+        })
     df = pd.DataFrame(emp)
-    #print(df)
+    df.head(num_results)
 
     # Convert the dataframe into a .csv file
     with open('csv_db.txt', 'w') as csv_db:
