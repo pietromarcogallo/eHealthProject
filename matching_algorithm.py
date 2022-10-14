@@ -1,3 +1,6 @@
+import string
+
+
 def count_occurrences(occurrence, text, black_list):
     words = text.split()
     for word in words:
@@ -21,9 +24,13 @@ def keep_main_words(occurrence, threshold):
 def create_dictionary(articles, black_list):
     occurrence = dict()
     for i, a in enumerate(articles['PubmedArticle']):
-        for sentence in a['MedlineCitation']['Article']['Abstract']['AbstractText']:
-            occurrence = count_occurrences(occurrence, sentence, black_list)
-    threshold = 5
+        article = a['MedlineCitation']['Article']
+        if 'Abstract' in article.keys():
+            abstract_text = article['Abstract']['AbstractText']
+            for sentence in abstract_text:
+                sentence = sentence.translate(str.maketrans('', '', string.punctuation))
+                occurrence = count_occurrences(occurrence, sentence, black_list)
+    threshold = 50
     occurrence = keep_main_words(occurrence, threshold)
     return list(occurrence.keys())
 

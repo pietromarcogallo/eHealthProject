@@ -101,11 +101,15 @@ if __name__ == '__main__':
     pertinence_list = []
     black_list = generate_black_list() + ['<', '>']
     referring_dictionary = create_dictionary(papers, black_list)
-    # print(referring_dictionary)
+    print(referring_dictionary)
     for i, paper in enumerate(papers['PubmedArticle']):
         # print("{}) {}".format(i+1, paper['MedlineCitation']['Article']['ArticleTitle']))
-        title = str(paper['MedlineCitation']['Article']['ArticleTitle'])
-        abstract = str(paper['MedlineCitation']['Article']['Abstract']['AbstractText'])
+        article = paper['MedlineCitation']['Article']
+        title = str(article['ArticleTitle'])
+        if 'AbstractText' in article.keys():
+            abstract = str(paper['MedlineCitation']['Article']['Abstract']['AbstractText'])
+        else:
+            abstract = ""
         emp.append((paper['MedlineCitation']['PMID'],
                     title,
                     paper['MedlineCitation']['KeywordList'],
