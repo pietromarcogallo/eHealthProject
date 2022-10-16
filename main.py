@@ -6,6 +6,7 @@
 from pymed import PubMed
 import pandas as pd
 from matching_algorithm import *
+from process_pubmed_object import *
 from Bio import Entrez
 import json
 
@@ -42,25 +43,6 @@ def fetch_details(id_list):
     return results
 
 
-def process_abstract(article):
-    return str(article['Abstract']['AbstractText'][0]) if 'Abstract' in article.keys() else ""
-
-
-def process_keywords(paper):
-    keywords = list()
-    for keyword in paper['MedlineCitation']['KeywordList']:
-        keywords.append(str(keyword[0]))
-    return keywords
-
-
-def process_authors(article):
-    authors = list()
-    for author in article['AuthorList']:
-        if 'ForeName' in author.keys() and 'LastName' in author.keys():
-            authors.append(author['ForeName'] + " " + author['LastName'])
-    return authors
-
-
 if __name__ == '__main__':
     search_term = input("Search PMC Full-Text Archive:\n")
     num_results = int(input("How many articles do you want?\n"))
@@ -69,28 +51,13 @@ if __name__ == '__main__':
     papers = fetch_details(id_list)
     emp = []
     pertinence_list = []
-    black_list = generate_black_list() + ['<', '>']     # To eventually update
+    black_list = generate_black_list() + list(string.punctuation)     # To eventually update
     referring_dictionary = create_dictionary(papers, black_list)
     # print(referring_dictionary)
     for i, paper in enumerate(papers['PubmedArticle']):
         # print("{}) {}".format(i+1, paper['MedlineCitation']['Article']['ArticleTitle']))
         article = paper['MedlineCitation']['Article']
         title = str(article['ArticleTitle'])
-        '''
-        emp.append((paper['MedlineCitation']['PMID'],
-                    title,
-                    paper['MedlineCitation']['KeywordList'],
-                    paper['MedlineCitation']['Article']['AuthorList'],
-                    abstract))
-        
-        emp.append({
-            'PMID': paper['MedlineCitation']['PMID'],
-            'title': title,
-            'keywords': list(paper['MedlineCitation']['KeywordList']),
-            'authors': list(article['AuthorList']),
-            'abstract': abstract
-        })
-        '''
         emp.append({
             'PMID': paper['MedlineCitation']['PMID'],
             'title': title,
@@ -98,7 +65,7 @@ if __name__ == '__main__':
             'authors': process_authors(article),
             'abstract': process_abstract(article)
         })
-    df = pd.DataFrame(emp)
+    df = pd.DataFrame(emp, columns=['PMID', 'title', 'keywords', 'authors', 'abstract'])
     df.head(num_results)
 
     # Convert the dataframe into a .csv file
