@@ -8,7 +8,7 @@ def get_data(article, name):
 
 def generate_black_list():
     black_list_from_excel = pd.read_excel(
-        'venv/List_of_common_words_to_use_as_black_list_for_dictionary_development.xlsx')
+        r"C:\Users\lcale\PycharmProjects\Database_Extr_Entrez\List_of_common_words_to_use_as_black_list_for_dictionary_development.xlsx")
     black_list_data = pd.DataFrame(black_list_from_excel, columns=['WORD'])
     return [''.join(map(str, str(word))) for word in black_list_data['WORD'].to_list()]
 
@@ -41,17 +41,18 @@ def process_abstract(article):
 def process_keywords(paper):
     keywords = list()
     for keyword in paper['MedlineCitation']['KeywordList']:
-        keywords.append(str(keyword[0]))
+        for i in range(0, len(keyword)):
+            keywords.append(str(keyword[i]))
     return keywords
 
 
 def process_authors(article):
+    if 'AuthorList' not in article.keys():
+        return []
     authors = list()
     for author in article['AuthorList']:
         if 'ForeName' in author.keys() and 'LastName' in author.keys():
-            authors.append(author['ForeName'] + " " + author['LastName'])
-        else:
-            authors.append("")
+            authors.append(str(author['ForeName']) + " " + str(author['LastName']))
     return authors
 
 def find_papers(search_term, num_results):
@@ -62,9 +63,6 @@ def find_papers(search_term, num_results):
 
 def db_creation(papers):
     emp = []
-    pertinence_list = []
-    #referring_dictionary = create_dictionary(papers, black_list)
-    # print(referring_dictionary)
     for i, paper in enumerate(papers['PubmedArticle']):
         # print("{}) {}".format(i+1, paper['MedlineCitation']['Article']['ArticleTitle']))
         article = paper['MedlineCitation']['Article']
@@ -76,5 +74,5 @@ def db_creation(papers):
             'authors': process_authors(article),
             'abstract': process_abstract(article)
         })
-    df = pd.DataFrame(emp)
+    df = pd.DataFrame(emp, columns=['PMID', 'title', 'keywords', 'authors', 'abstract'])
     return df

@@ -3,7 +3,6 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
-from pymed import PubMed
 import pandas as pd
 from matching_algorithm import *
 from process_pubmed_object import *
@@ -69,6 +68,6 @@ if __name__ == '__main__':
     df.head(num_results)
 
     # Convert the dataframe into a .csv file
-    with open('csv_db.txt', 'w') as csv_db:
+    with open('csv_db.txt', 'w', encoding='utf-8') as csv_db:
         df.to_csv(path_or_buf=csv_db, index=False)
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
