@@ -8,7 +8,7 @@ def get_data(article, name):
 
 def generate_black_list():
     black_list_from_excel = pd.read_excel(
-        r"venv/List_of_common_words_to_use_as_black_list_for_dictionary_development.xlsx")
+        "venv/List_of_common_words_to_use_as_black_list_for_dictionary_development.xlsx")
     black_list_data = pd.DataFrame(black_list_from_excel, columns=['WORD'])
     return [''.join(map(str, str(word))) for word in black_list_data['WORD'].to_list()]
 
@@ -35,7 +35,7 @@ def fetch_details(id_list):
 
 
 def process_abstract(article):
-    return str(article['Abstract']['AbstractText'][0]) if 'Abstract' in article.keys() else ""
+    return str(article['Abstract']['AbstractText']) if 'Abstract' in article.keys() else ""
 
 
 def process_keywords(paper):
