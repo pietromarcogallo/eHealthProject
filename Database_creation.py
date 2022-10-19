@@ -8,7 +8,7 @@ def get_data(article, name):
 
 def generate_black_list():
     black_list_from_excel = pd.read_excel(
-        r"C:\Users\lcale\PycharmProjects\Database_Extr_Entrez\List_of_common_words_to_use_as_black_list_for_dictionary_development.xlsx")
+        "venv/List_of_common_words_to_use_as_black_list_for_dictionary_development.xlsx")
     black_list_data = pd.DataFrame(black_list_from_excel, columns=['WORD'])
     return [''.join(map(str, str(word))) for word in black_list_data['WORD'].to_list()]
 
@@ -35,7 +35,7 @@ def fetch_details(id_list):
 
 
 def process_abstract(article):
-    return str(article['Abstract']['AbstractText'][0]) if 'Abstract' in article.keys() else ""
+    return str(article['Abstract']['AbstractText']) if 'Abstract' in article.keys() else ""
 
 
 def process_keywords(paper):
@@ -55,11 +55,13 @@ def process_authors(article):
             authors.append(str(author['ForeName']) + " " + str(author['LastName']))
     return authors
 
+
 def find_papers(search_term, num_results):
     results = search(search_term, str(num_results))
     id_list = results['IdList']
     papers = fetch_details(id_list)
     return papers
+
 
 def db_creation(papers):
     emp = []
