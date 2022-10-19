@@ -55,10 +55,12 @@ def convert_to_float(occ):
     return occ
 
 
-def words_weight_assig(occurence, num_results):
-    occurence.update((x, y / num_results) for x, y in occurence.items())
-    max_key = max(occurence, key=occurence.get)
-    max_freq = occurence[max_key] / 2
-    occurence[max_key] = occurence[max_key] / 2
-    occurence.update((x, y / max_freq) for x, y in occurence.items())
-    return occurence
+def words_weight_assig(occurrence, num_results):
+    occurrence.update((x, y / num_results) for x, y in occurrence.items())
+    max_key = max(occurrence, key=occurrence.get)
+    max_freq = occurrence[max_key] / 2
+    list_of_occurrences = list(occurrence.values())
+    if list_of_occurrences[0] / list_of_occurrences[1] > 5:
+        occurrence[max_key] = occurrence[max_key] / 2
+    occurrence.update((x, y / max_freq) for x, y in occurrence.items())
+    return occurrence

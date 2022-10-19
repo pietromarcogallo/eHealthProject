@@ -53,4 +53,4 @@ if __name__ == '__main__':
     # Convert the dataframe into a .csv file
     with open('csv_c.txt', 'w', encoding='utf-8') as csv_c:
         cdf.to_csv(path_or_buf=csv_c, index=False)
-    print(score)
+    # print(score)
