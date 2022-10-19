@@ -1,5 +1,5 @@
 def process_abstract(article):
-    return str(article['Abstract']['AbstractText'][0]) if 'Abstract' in article.keys() else ""
+    return str(article['Abstract']['AbstractText']) if 'Abstract' in article.keys() else ""
 
 
 def process_keywords(paper):

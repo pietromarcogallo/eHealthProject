@@ -2,7 +2,13 @@ from scoring import *
 
 if __name__ == '__main__':
     search_term = input("Search PMC Full-Text Archive:\n")
-    num_results = int(input("How many articles do you want?\n"))
+    while True:
+        try:
+            num_results = int(input("How many articles do you want?\n"))
+            break
+        # If the user doesn't answer with a number, the message will be repeated until it happens
+        except ValueError:
+            print('Answer not recognised: please insert an integer number...')
     black_list = generate_black_list() + list(string.punctuation)
 
     # Using entrez API to gather articles
@@ -17,9 +23,9 @@ if __name__ == '__main__':
 
     # Creating the reference dictionary with associated weights based of relative frequency
     # of occurrences over the number of abstracts
-    occurences = create_dictionary(papers, black_list)
-    f_occurences = convert_to_float(occurences)
-    ref_dictionary = words_weight_assig(f_occurences, num_results)
+    occurrences = create_dictionary(papers, black_list)
+    f_occurrences = convert_to_float(occurrences)
+    ref_dictionary = words_weight_assig(f_occurrences, num_results)
     # Adding the input string as a ref_dict key with value 1
     search_term = search_term.lower()
     input_string = {search_term: 1}
