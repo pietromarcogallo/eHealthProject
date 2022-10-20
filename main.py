@@ -32,13 +32,11 @@ if __name__ == '__main__':
     ref_dictionary.update(input_string)
 
     # Articles PMID to be classified are inserted in id_list
-    id_list = ['33549739', '30195575', '31570648', '33843998', '26585576', '30091808', '29150311',
-               '34797010', '25985979', '22013285', '29864032']
+    id_list = ['33549739']
 
-    #1Y, 2Y, 3Y, 4Y, 5Nb,
     cpapers = fetch_details(id_list)
 
-    # Creating dictionaries for each article to be classified
+    # Creating dictionaries for each article to be classified'
     Tdict = create_tdictionary(cpapers, "")  # Title dictionaries
     Kdict = create_kdictionary(cpapers, "")  # Keywords dictionaries
     Adict = create_adictionary(cpapers, black_list)  # Abstract dictionaries
@@ -62,4 +60,5 @@ if __name__ == '__main__':
     # Convert the dataframe into a .csv file
     with open('csv_c.txt', 'w', encoding='utf-8') as csv_c:
         cdf.to_csv(path_or_buf=csv_c, index=False)
-    print(ref_dictionary)
+
+

@@ -83,7 +83,7 @@ def scoring_assignment(ref_dict, d_occ, sk):
 def fin_score(scoreT, scoreK, scoreA):
     score_list = []
     for i in range(0, len(scoreT)):
-        score = scoreA[i] + 2.5*scoreK[i] + 5*scoreT[i]
+        score = scoreA[i] + 2.5*scoreK[i] + 4*scoreT[i]
         score_list.append(score)
     return score_list
 
