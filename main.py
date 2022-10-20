@@ -61,4 +61,7 @@ if __name__ == '__main__':
     with open('csv_c.txt', 'w', encoding='utf-8') as csv_c:
         cdf.to_csv(path_or_buf=csv_c, index=False)
 
+    # Create .xlsx files for both databases for readability purposes
+    df.to_excel('Database.xlsx')
+    cdf.to_excel('Classification_database.xlsx')
 
